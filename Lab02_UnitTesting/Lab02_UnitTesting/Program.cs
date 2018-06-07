@@ -194,6 +194,7 @@ namespace Lab02_UnitTesting
             Console.WriteLine(String.Format("Before 'Murica surcharges, your balance was {0:C}", TotalBalance));
             Console.WriteLine(String.Format("After surcharges, your remaining balance is {0:C}", NewTotalBalance));
             Console.WriteLine("Press any key to exit. Have a great day.");
+            Console.ReadLine();
         }
     }
 
