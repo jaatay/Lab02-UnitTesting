@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Lab02_UnitTesting
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            //welcome line and start of program
-            Console.WriteLine("Welcome to the Bank");
+            //function call to start program
             StartProgram();
         }
 
         //global variables available to all methods
         public static double TotalBalance = 5000;
+        public static double AmountAdded;
+        public static double AmountWithdrawn;
         public static bool RunProgram = true;
 
         //method to initiate program
@@ -23,43 +25,56 @@ namespace Lab02_UnitTesting
                 ChooseOptions();
             }
 
-            //put receipt here
+            PrintReceipt();
         }
 
         //prints menu options to console, calls next method based on user input
         public static void ChooseOptions()
         {
+            Console.WriteLine("Thanks for visiting Bank of 'Murica!");
             Console.WriteLine("What would you like to do?");
             Console.WriteLine("1. Check Balance");
             Console.WriteLine("2. Deposit");
             Console.WriteLine("3. Withdrawal");
             Console.WriteLine("4. Exit");
 
-            //put try here
-            int UserChoice = Int32.Parse(Console.ReadLine());
+            int UserChoice = 0;
 
-            switch (UserChoice)
+            try
             {
-                case 1:
-                    CheckBalance();
-                    break;
+                UserChoice = Int32.Parse(Console.ReadLine());
+            }
+            catch (Exception e)
+            {
+                Console.Clear();
+                Console.WriteLine(e.Message);
+                Console.WriteLine ("Please make a valid selection.");
+            }
+            finally
+            {
+                switch (UserChoice)
+                {
+                    case 1:
+                        CheckBalance();
+                        break;
 
-                case 2:
-                    DepositMoney();
-                    break;
+                    case 2:
+                        DepositMoney();
+                        break;
 
-                case 3:
-                    WithdrawMoney();
-                    break;
+                    case 3:
+                        WithdrawMoney();
+                        break;
 
-                case 4:
-                    Console.WriteLine("Thanks for playing");
-                    RunProgram = false;
-                    break;
+                    case 4:
+                        RunProgram = false;
+                        break;
 
-                default:
-                    Console.WriteLine("Please choose an option.");
-                    break;
+                    default:
+                        Console.Clear();
+                        Console.WriteLine("Please make a valid selection.");
+                        break;
+                }
             }
         }
 
@@ -76,33 +91,83 @@ namespace Lab02_UnitTesting
         {
             Console.Clear();
             Console.WriteLine("How much money would you like to deposit?");
-            double AddMoney = Double.Parse(Console.ReadLine());
-            TotalBalance += AddMoney;
+
+            double AddMoney = 0;
+
+            try
+            {
+                AddMoney = Double.Parse(Console.ReadLine());
+                DepositMoneyMath(AddMoney);
+              
+            }
+            catch (Exception)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid input.");
+            }
+
+        }
+
+       public static double DepositMoneyMath(double AddedMoney)
+        {
             Console.Clear();
             Console.WriteLine("Deposit successful.");
+            TotalBalance += AddedMoney;
+            AmountAdded += AddedMoney;
+
+            return AddedMoney;
         }
 
         //method to withdraw money from account
-        public static void WithdrawMoney()
+        public static double WithdrawMoney()
         {
             Console.Clear();
             Console.WriteLine("How much money would you like to withdraw?");
-            double SubtractMoney = Double.Parse(Console.ReadLine());
 
-            if(TotalBalance - SubtractMoney < 0)
+            double SubtractMoney = 0;
+
+            try
+            {
+                SubtractMoney = Double.Parse(Console.ReadLine());
+                if (TotalBalance - SubtractMoney < 0)
+                {
+                    Console.Clear();
+                    throw new ArgumentOutOfRangeException();
+                }
+                else
+                {
+                    TotalBalance -= SubtractMoney;
+                    AmountWithdrawn += SubtractMoney;
+                    Console.Clear();
+                    Console.WriteLine("Operation successful.");
+                }
+            }
+            catch (ArgumentOutOfRangeException)
             {
                 Console.Clear();
                 Console.WriteLine("Insufficient funds available.");
-            } else
-            {
-                TotalBalance -= SubtractMoney;
-                Console.Clear();
-                Console.WriteLine("Operation successful.");
             }
-
-          
+            catch (Exception)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid input.");
+                
+            }  
+                return TotalBalance;
         }
 
-
+        //method to print receipt
+        public static void PrintReceipt()
+        {
+            int NewTotalBalance = 0;
+            Console.Clear();
+            Console.WriteLine("Thanks for banking with the Bank of 'Murica.");
+            Console.WriteLine("Electronic Receipt:");
+            Console.WriteLine(String.Format("You added {0:C}", AmountAdded));
+            Console.WriteLine(String.Format("You withdrew {0:C}", AmountWithdrawn));
+            Console.WriteLine(String.Format("Before 'Murica surcharges, your balance was {0:C}", TotalBalance));
+            Console.WriteLine(String.Format("After surcharges, your remaining balance is {0:C}", NewTotalBalance));
+            Console.WriteLine("Press any key to exit. Have a great day.");
+        }
     }
 }
