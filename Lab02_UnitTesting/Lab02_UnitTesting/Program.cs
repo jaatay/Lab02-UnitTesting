@@ -44,11 +44,10 @@ namespace Lab02_UnitTesting
             {
                 UserChoice = Int32.Parse(Console.ReadLine());
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.Clear();
-                Console.WriteLine(e.Message);
-                Console.WriteLine ("Please make a valid selection.");
+                Console.WriteLine("Please make a valid selection.");
             }
             finally
             {
@@ -97,18 +96,28 @@ namespace Lab02_UnitTesting
             try
             {
                 AddMoney = Double.Parse(Console.ReadLine());
+
+                if (AddMoney < 0)
+                {
+                    throw new FormatException();
+                }
+
                 DepositMoneyMath(AddMoney);
-              
+            }
+            catch (FormatException)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid input.");
             }
             catch (Exception)
             {
                 Console.Clear();
                 Console.WriteLine("Invalid input.");
             }
-
         }
 
-       public static double DepositMoneyMath(double AddedMoney)
+        //method to math the user's input (mostly added because xUnit can't test ReadLine)
+        public static double DepositMoneyMath(double AddedMoney)
         {
             Console.Clear();
             Console.WriteLine("Deposit successful.");
@@ -119,7 +128,7 @@ namespace Lab02_UnitTesting
         }
 
         //method to withdraw money from account
-        public static double WithdrawMoney()
+        public static void WithdrawMoney()
         {
             Console.Clear();
             Console.WriteLine("How much money would you like to withdraw?");
@@ -129,31 +138,48 @@ namespace Lab02_UnitTesting
             try
             {
                 SubtractMoney = Double.Parse(Console.ReadLine());
-                if (TotalBalance - SubtractMoney < 0)
+                if (SubtractMoney < 0)
+                {
+                    throw new FormatException();
+                }
+
+                WithdrawMoneyMath(SubtractMoney);
+            }
+            catch (FormatException)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid input.");
+            }
+            catch (Exception)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid input.");
+            }
+        }
+
+        //method to do the computations for WithdrawMoney, added for TDD
+        public static double WithdrawMoneyMath(double SubtractedMoney)
+        {
+            try
+            {
+                if (TotalBalance - SubtractedMoney < 0)
                 {
                     Console.Clear();
                     throw new ArgumentOutOfRangeException();
                 }
                 else
                 {
-                    TotalBalance -= SubtractMoney;
-                    AmountWithdrawn += SubtractMoney;
+                    TotalBalance -= SubtractedMoney;
+                    AmountWithdrawn += SubtractedMoney;
                     Console.Clear();
                     Console.WriteLine("Operation successful.");
                 }
             }
             catch (ArgumentOutOfRangeException)
             {
-                Console.Clear();
-                Console.WriteLine("Insufficient funds available.");
+                Console.WriteLine("Insufficient funds.");
             }
-            catch (Exception)
-            {
-                Console.Clear();
-                Console.WriteLine("Invalid input.");
-                
-            }  
-                return TotalBalance;
+            return SubtractedMoney;
         }
 
         //method to print receipt
@@ -170,4 +196,7 @@ namespace Lab02_UnitTesting
             Console.WriteLine("Press any key to exit. Have a great day.");
         }
     }
+
+
+
 }
